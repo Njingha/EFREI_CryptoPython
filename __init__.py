@@ -28,6 +28,26 @@ def decryptage(valeur):
         return f"Valeur décryptée : {decrypted.decode()}"
     except:
         return "Erreur : valeur non déchiffrable"
+      
+@app.route('/encrypt/', methods=['POST'])
+def encrypt():
+    try:
+        data = request.get_json()
+        key = data['key'].encode()
+        message = data['message'].encode()
+
+        f = Fernet(key)
+        encrypted_token = f.encrypt(message).decode()
+        return jsonify({'encrypted_token': encrypted_token})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/generate-key/', methods=['GET'])
+def generate_key():
+    key = Fernet.generate_key().decode()
+    return jsonify({'key': key})
+
                                                                                                                                                      
 if __name__ == "__main__":
   app.run(debug=True)
